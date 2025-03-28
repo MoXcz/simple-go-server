@@ -4,23 +4,30 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
 func main() {
 	m := http.NewServeMux()
+	port := os.Getenv("PORT")
+	if port == "" {
+		fmt.Println("PORT default to 8080")
+		port = "8080"
+	}
+	port = ":" + port
 
 	m.HandleFunc("/", handlePage)
 
-	const addr = ":8080"
 	srv := http.Server{
 		Handler:      m,
-		Addr:         addr,
+		Addr:         port,
 		WriteTimeout: 30 * time.Second,
 		ReadTimeout:  30 * time.Second,
 	}
 
-	fmt.Println("server started on ", addr)
+	fmt.Println("PORT env variable:", os.Getenv("PORT"))
+	fmt.Println("server started on ", port)
 	err := srv.ListenAndServe()
 	log.Fatal(err)
 }
